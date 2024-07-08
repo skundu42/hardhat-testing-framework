@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IERC20 {
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    function transfer(address recipient, uint256 amount) external returns (bool);
-}
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Staking {
-    IERC20 public stakingToken;
+    ERC20 public stakingToken;
     uint256 public rewardRate = 100; // Reward rate per second
     uint256 public lastUpdateTime;
     mapping(address => uint256) public userRewards;
@@ -15,7 +12,7 @@ contract Staking {
     mapping(address => uint256) public userLastUpdateTime;
     uint256 public totalStaked;
 
-    constructor(IERC20 _stakingToken) {
+    constructor(ERC20 _stakingToken) {
         stakingToken = _stakingToken;
         lastUpdateTime = block.timestamp;
     }
@@ -51,5 +48,11 @@ contract Staking {
             userRewards[_user] += reward;
             userLastUpdateTime[_user] = block.timestamp;
         }
+    }
+}
+
+contract ERC20Mock is ERC20 {
+    constructor(string memory name, string memory symbol, uint256 initialSupply) ERC20(name, symbol) {
+        _mint(msg.sender, initialSupply);
     }
 }
